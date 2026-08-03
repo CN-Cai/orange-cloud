@@ -265,20 +265,18 @@ final class AuthManager {
         let challenge = PKCEHelper.generateCodeChallenge(from: verifier)
         let state     = UUID().uuidString
 
-        // CF dash OAuth（Hydra 系）只在请求 offline_access 时才签发 refresh token；
-        // 2026-06-29 client 轮换后不带它的新登录拿不到 refresh token，access token
-        // 到期即会话搁浅（重授权横幅反复出现的根因）。在此单一咽喉点统一追加，
-        // 覆盖登录与重授权两条流，勿在 UI 层散落。wrangler 同样携带该 scope。
-        let scopeWithOffline = scopeString.components(separatedBy: " ").contains("offline_access")
-            ? scopeString
-            : scopeString + " offline_access"
+        // Cloudflare 新版 OAuth（/accounts/{id}/oauth_clients）不接受 offline_access scope：
+        // 授权请求若携带它会被拒绝（invalid_scope），且其不在 GET /oauth/scopes 可选列表中。
+        // 旧版 Hydra 需要 offline_access 才签发 refresh token；新版默认行为按客户端配置签发，
+        // 故此处不再追加（追加反而导致登录失败）。若未来官方支持再恢复。
+        let scope = scopeString
 
         var components = URLComponents(url: OAuthConfig.authorizationURL, resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "response_type",         value: "code"),
             URLQueryItem(name: "client_id",             value: OAuthConfig.clientID),
             URLQueryItem(name: "redirect_uri",          value: OAuthConfig.redirectURI),
-            URLQueryItem(name: "scope",                 value: scopeWithOffline),
+            URLQueryItem(name: "scope",                 value: scope),
             URLQueryItem(name: "state",                 value: state),
             URLQueryItem(name: "code_challenge",        value: challenge),
             URLQueryItem(name: "code_challenge_method", value: "S256"),
