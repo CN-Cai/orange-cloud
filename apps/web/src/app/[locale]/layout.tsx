@@ -7,7 +7,7 @@ import "../globals.css";
 import Head from "next/head";
 import Script from "next/script";
 
-const SITE_URL = "https://o-c.do";
+const SITE_URL = "https://oca.998810.xyz";
 
 const OG_LOCALES: Record<string, string> = {
 	en: "en_US",

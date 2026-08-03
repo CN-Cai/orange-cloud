@@ -10,7 +10,7 @@ import { routing } from "@/i18n/routing";
 
 export const dynamic = "force-dynamic";
 
-const FALLBACK_ORIGIN = "https://o-c.do";
+const FALLBACK_ORIGIN = "https://oca.998810.xyz";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
 	const { env } = getCloudflareContext();

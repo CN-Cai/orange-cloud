@@ -15,7 +15,7 @@ import { latestVersion } from "@orange-cloud/changelog";
 // 前提：发版说明在送审前已提交。
 //
 // 配置：App Store Connect → Users and Access → Integrations → Webhooks，
-//   事件 App Version State，URL https://o-c.do/api/asc/webhook
+//   事件 App Version State，URL https://oca.998810.xyz/api/asc/webhook
 
 export const dynamic = "force-dynamic";
 

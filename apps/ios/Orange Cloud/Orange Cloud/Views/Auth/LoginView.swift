@@ -101,9 +101,9 @@ struct LoginView: View {
                         HStack(spacing: 6) {
                             Text("版本 \(appVersion)")
                             Text("·")
-                            Link("隐私政策", destination: URL(string: "https://o-c.do/privacy")!)
+                            Link("隐私政策", destination: URL(string: "https://oca.998810.xyz/privacy")!)
                             Text("·")
-                            Link("使用条款", destination: URL(string: "https://o-c.do/terms")!)
+                            Link("使用条款", destination: URL(string: "https://oca.998810.xyz/terms")!)
                         }
                         .font(.caption2)
                         .foregroundStyle(.tertiary)

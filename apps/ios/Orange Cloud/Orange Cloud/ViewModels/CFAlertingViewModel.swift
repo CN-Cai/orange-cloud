@@ -14,7 +14,7 @@ import Observation
 final class CFAlertingViewModel {
 
     private let auth: AuthManager
-    private let endpointURL: String   // push.o-c.do/{key}
+    private let endpointURL: String   // push.oca.998810.xyz/{key}
 
     private(set) var accounts: [Account] = []
     private(set) var selectedAccountId: String?

@@ -12,7 +12,7 @@ plugins {
 
 // 官方 OAuth Client（PKCE 公开客户端，非机密；与 iOS OAuthConfig.swift 同值）。
 // oss 自编译者在 local.properties 覆盖 OAUTH_CLIENT_ID 并自建回调，官方 Client 不向第三方构建开放。
-val officialOAuthClientId = "102240eb9095a1965ee11813ef4788cd"
+val officialOAuthClientId = "ee9fc88b1051753e3875ad7a744f7604"
 val localProps = Properties().apply {
     val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }

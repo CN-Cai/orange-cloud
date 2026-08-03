@@ -1,0 +1,63 @@
+name: Deploy Web to Cloudflare Workers
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.5.1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 你的账号里没有原作者的 D1 数据库（orange-cloud-iap）。
+      # 这一步：查不到就创建，并把返回的 database_id 回填进 apps/web/wrangler.jsonc，然后应用迁移。
+      - name: Ensure D1 database and apply migrations
+        working-directory: apps/web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -e
+          DB_NAME="orange-cloud-iap"
+          EXISTING_ID=$(npx wrangler d1 list --format json | node -e "let s='';process.stdin.on('data',c=>s+=c);process.stdin.on('end',()=>{try{const j=JSON.parse(s);const f=j.find(x=>x.name===process.argv[1]);console.log(f?f.uuid:'')}catch(e){console.log('')}})" "$DB_NAME")
+          if [ -z "$EXISTING_ID" ]; then
+            OUT=$(npx wrangler d1 create "$DB_NAME")
+            DB_ID=$(echo "$OUT" | grep -oE '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}' | head -1)
+          else
+            DB_ID="$EXISTING_ID"
+          fi
+          if [ -z "$DB_ID" ]; then
+            echo "::error::Could not determine D1 database id for $DB_NAME"
+            exit 1
+          fi
+          node -e "const fs=require('fs');const p='wrangler.jsonc';let t=fs.readFileSync(p,'utf8');t=t.replace(/(\"database_id\"\s*:\s*\")[^\"]+(\")/,'\$1'+process.argv[1]+'\$2');fs.writeFileSync(p,t)" "$DB_ID"
+          echo "D1 database id: $DB_ID"
+          npx wrangler d1 migrations apply "$DB_NAME" --remote
+
+      - name: Deploy web to Cloudflare Workers
+        working-directory: apps/web
+        run: pnpm deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

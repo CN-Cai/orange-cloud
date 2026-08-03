@@ -1,6 +1,6 @@
 # Orange Cloud Web
 
-The landing page and OAuth callback relay for [Orange Cloud](https://github.com/chen2he/orange-cloud), deployed at [o-c.do](https://o-c.do) on Cloudflare Workers.
+The landing page and OAuth callback relay for [Orange Cloud](https://github.com/chen2he/orange-cloud), deployed at [oca.998810.xyz](https://oca.998810.xyz) on Cloudflare Workers.
 
 ## What this app does
 
@@ -32,13 +32,13 @@ What's wired up:
 
   ```bash
   curl -X POST "https://api.indexnow.org/indexnow" -H "Content-Type: application/json" -d '{
-    "host": "o-c.do",
+    "host": "oca.998810.xyz",
     "key": "ae4368227a78d73327c42c34949e9075",
-    "urlList": ["https://o-c.do/"]
+    "urlList": ["https://oca.998810.xyz/"]
   }'
   ```
 
-One-time manual steps (dashboard accounts required): verify the domain in [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster Tools](https://www.bing.com/webmasters), submit `https://o-c.do/sitemap.xml` in both, and optionally list `llms.txt` at [directory.llmstxt.cloud](https://directory.llmstxt.cloud) / [llmstxt.site](https://llmstxt.site).
+One-time manual steps (dashboard accounts required): verify the domain in [Google Search Console](https://search.google.com/search-console) and [Bing Webmaster Tools](https://www.bing.com/webmasters), submit `https://oca.998810.xyz/sitemap.xml` in both, and optionally list `llms.txt` at [directory.llmstxt.cloud](https://directory.llmstxt.cloud) / [llmstxt.site](https://llmstxt.site).
 
 ## Develop
 
@@ -63,4 +63,15 @@ pnpm cf-typegen   # regenerate cloudflare-env.d.ts after changing wrangler.jsonc
 pnpm deploy       # opennextjs-cloudflare build && deploy
 ```
 
-The official deployment uses the custom domain `o-c.do` (configured in `wrangler.jsonc` `routes`). For your own fork: change the `name` and `routes` in [`wrangler.jsonc`](wrangler.jsonc), deploy under your own Cloudflare account, then register `https://<your-domain>/oauth/callback` as the redirect URI of **your own** Cloudflare OAuth client (see [CONTRIBUTING.md](../../CONTRIBUTING.md)).
+The deployment uses the custom domain `oca.998810.xyz` (configured in `wrangler.jsonc` `routes`), deployed on your own Cloudflare account. Register `https://oca.998810.xyz/oauth/callback` as the redirect URI of **your own** Cloudflare OAuth client (see [CONTRIBUTING.md](../../CONTRIBUTING.md)).
+
+### GitHub Actions (CI)
+
+[`.github/workflows/deploy-web.yml`](../../.github/workflows/deploy-web.yml) auto-deploys on every push to `main` that touches `apps/web`. It also creates the `orange-cloud-iap` D1 database in your account on first run and applies migrations, so a fresh account works without manual DB setup.
+
+Add these two to **repo Settings → Secrets and variables → Actions**:
+
+| Secret name | Value |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with `Workers Scripts: Edit` (and `D1: Edit` to auto-create the DB) |
+| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |

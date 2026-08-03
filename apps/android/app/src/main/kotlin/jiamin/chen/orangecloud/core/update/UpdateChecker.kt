@@ -79,7 +79,7 @@ class UpdateChecker @Inject constructor(
         context.updateStore.data.first()[KEY_DISMISSED] ?: 0
 
     companion object {
-        private const val LATEST_URL = "https://o-c.do/android/latest.json"
+        private const val LATEST_URL = "https://oca.998810.xyz/android/latest.json"
         private val KEY_DISMISSED = intPreferencesKey("dismissed_version")
     }
 }

@@ -36,12 +36,15 @@
 		}
 	],
 	// Cloudflare Email Service（Email Sending）—— 发激活码邮件，绑定式、无需 API key。
-	// 发件域名须先 onboard：`wrangler email sending enable hz.do`。
-	"send_email": [
-		{
-			"name": "EMAIL"
-		}
-	],
+	// 发件域名须先 onboard：`wrangler email sending enable oca.998810.xyz`。
+	// 注意：账号未 onboard Email Sending 时，此绑定会让 `wrangler deploy` 失败。
+	// 默认注释掉以保障首次部署成功（代码对缺绑定做了优雅降级，不发邮件而已）；
+	// 需要发码邮件时，先执行上述 enable 命令，再取消下面注释。
+	// "send_email": [
+	// 	{
+	// 		"name": "EMAIL"
+	// 	}
+	// ],
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name
@@ -61,16 +64,12 @@
 	},
 	"routes": [
 		{
-			"pattern": "orange-cloud.chatiro.app",
+			"pattern": "oca.998810.xyz",
 			"custom_domain": true
 		},
 		{
-			"pattern": "o-c.do",
-			"custom_domain": true,
-		},
-		{
-			"pattern": "www.o-c.do",
-			"custom_domain": true,
+			"pattern": "www.oca.998810.xyz",
+			"custom_domain": true
 		}
 	]
 }
