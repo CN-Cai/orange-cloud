@@ -18,4 +18,9 @@ export default withNextIntl(nextConfig);
 // Enable calling `getCloudflareContext()` in `next dev`.
 // See https://opennext.js.org/cloudflare/bindings#local-access-to-bindings.
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-initOpenNextCloudflareForDev();
+
+// 只在 `next dev` 下初始化本地 wrangler 上下文；`next build`（SSG/Cloudflare Pages）
+// 不连接 remote 代理，否则未登录的构建环境会直接失败。
+if (process.env.NODE_ENV !== "production") {
+	initOpenNextCloudflareForDev();
+}

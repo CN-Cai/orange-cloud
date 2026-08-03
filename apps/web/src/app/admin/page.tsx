@@ -23,8 +23,9 @@ import { TimezoneToggle, UpdatedAt } from "@/components/dashboard/prefs";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/admin/auth";
 import { parseFilters, parsePage } from "@/lib/dashboard/types";
 
-// 无 force-dynamic：读取会话 cookie（next/headers）即令本路由动态渲染，
-// 每次请求实时读 D1，构建期不会预渲染（D1 / cookie 在构建期不可用）。
+// 构建期无 D1 / Cloudflare 上下文，若被 SSG 预渲染会触发 wrangler remote 连接而失败；
+// 本路由本就依赖会话 cookie + 实时 D1，强制动态渲染（构建期跳过，运行时每次实时渲染）。
+export const dynamic = "force-dynamic";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 

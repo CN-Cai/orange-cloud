@@ -6,7 +6,9 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/admin/auth";
 import { login } from "./actions";
 
-// 读 cookie 判定是否已登录即令本页动态渲染（无需 force-dynamic）。
+// 构建期无 Cloudflare 上下文，强制动态渲染以免 SSG 预渲染时触发 wrangler remote 连接失败。
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
 	title: "登录 · Orange Cloud 后台账本",
 	robots: { index: false, follow: false },
