@@ -11,16 +11,19 @@
 import { default as handler } from "./.open-next/worker.js";
 import { captureRanks } from "./src/lib/ranks/capture";
 
-const REDIRECT_TARGET = "https://github.com/CN-Cai/orange-cloud";
+const NOT_FOUND_BODY = "404\n";
 
 export default {
 	fetch(request, env, ctx) {
 		const url = new URL(request.url);
-		// 仅放行 OAuth 回调（登录流程依赖）；其余路径隐藏网页。
+		// 仅放行 OAuth 回调（登录流程依赖）；其余路径一律 404，不再对外展示网页。
 		if (url.pathname === "/oauth/callback") {
 			return handler.fetch(request, env, ctx);
 		}
-		return Response.redirect(REDIRECT_TARGET, 302);
+		return new Response(NOT_FOUND_BODY, {
+			status: 404,
+			headers: { "content-type": "text/plain; charset=utf-8" },
+		});
 	},
 
 	// 每天 UTC 08:00（wrangler.jsonc triggers.crons）抓 App Store 各地区榜单名次入 D1。
