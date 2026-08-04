@@ -265,11 +265,12 @@ final class AuthManager {
         let challenge = PKCEHelper.generateCodeChallenge(from: verifier)
         let state     = UUID().uuidString
 
-        // Cloudflare 新版 OAuth（/accounts/{id}/oauth_clients）不接受 offline_access scope：
-        // 授权请求若携带它会被拒绝（invalid_scope），且其不在 GET /oauth/scopes 可选列表中。
-        // 旧版 Hydra 需要 offline_access 才签发 refresh token；新版默认行为按客户端配置签发，
-        // 故此处不再追加（追加反而导致登录失败）。若未来官方支持再恢复。
-        let scope = scopeString
+        // Cloudflare OAuth 需要 offline_access 才会签发 refresh token（缺它则 access token
+        // 到期后无法续期，自动登出）。客户端必须启用 refresh_token grant 才能接受该 scope；
+        // 在此统一追加（已存在则不重复），覆盖登录与重授权两条流。
+        let scope = scopeString.components(separatedBy: " ").contains("offline_access")
+            ? scopeString
+            : scopeString + " offline_access"
 
         var components = URLComponents(url: OAuthConfig.authorizationURL, resolvingAgainstBaseURL: false)!
         components.queryItems = [
