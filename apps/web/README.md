@@ -63,15 +63,4 @@ pnpm cf-typegen   # regenerate cloudflare-env.d.ts after changing wrangler.jsonc
 pnpm deploy       # opennextjs-cloudflare build && deploy
 ```
 
-The deployment uses the custom domain `oca.998810.xyz` (configured in `wrangler.jsonc` `routes`), deployed on your own Cloudflare account. Register `https://oca.998810.xyz/oauth/callback` as the redirect URI of **your own** Cloudflare OAuth client (see [CONTRIBUTING.md](../../CONTRIBUTING.md)).
-
-### GitHub Actions (CI)
-
-[`.github/workflows/deploy-web.yml`](../../.github/workflows/deploy-web.yml) auto-deploys on every push to `main` that touches `apps/web`. It also creates the `orange-cloud-iap` D1 database in your account on first run and applies migrations, so a fresh account works without manual DB setup.
-
-Add these two to **repo Settings → Secrets and variables → Actions**:
-
-| Secret name | Value |
-| --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with `Workers Scripts: Edit` (and `D1: Edit` to auto-create the DB) |
-| `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare account ID |
+The official deployment uses the custom domain `oca.998810.xyz` (configured in `wrangler.jsonc` `routes`). For your own fork: change the `name` and `routes` in [`wrangler.jsonc`](wrangler.jsonc), deploy under your own Cloudflare account, then register `https://<your-domain>/oauth/callback` as the redirect URI of **your own** Cloudflare OAuth client (see [CONTRIBUTING.md](../../CONTRIBUTING.md)).

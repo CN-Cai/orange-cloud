@@ -97,9 +97,10 @@ class AuthRepository @Inject constructor(
         val state = UUID.randomUUID().toString()
         savePending(Pending(verifier, state))
 
-        // Cloudflare OAuth 需要 offline_access 才会签发 refresh token（缺它则 access token
-        // 到期后无法续期，自动登出）。客户端必须启用 refresh_token grant 才能接受该 scope；
-        // 在此统一追加（已存在则不重复），覆盖登录与重授权两条流。
+        // CF dash OAuth（Hydra 系）只在请求 offline_access 时才签发 refresh token；
+        // 2026-06-29 client 轮换后不带它的登录拿不到 refresh token，access token 到期后
+        // refreshAccessToken 走 removeSession → 用户被「自动退出账号」（issue #44 楼层反馈）。
+        // 与 iOS 1.8.2(26) 同修：在唯一咽喉点统一追加，勿在 UI 层散落。
         val scopeWithOffline =
             if (scopeString.split(" ").contains("offline_access")) scopeString
             else "$scopeString offline_access"

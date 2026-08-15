@@ -24,7 +24,7 @@ actor R2FileProviderClient {
 
     private static let keychainService = "app.orangecloud.oauth"
     private static let keychainAccessGroup = "6G78MMY657.jiamin.chen.orange-cloud.shared"
-    private static let oauthClientID = "102240eb9095a1965ee11813ef4788cd"
+    private static let oauthClientID = "ee9fc88b1051753e3875ad7a744f7604"
     private static let oauthTokenURL = URL(string: "https://dash.cloudflare.com/oauth2/token")!
     private let apiBase = URL(string: "https://api.cloudflare.com/client/v4")!
 
